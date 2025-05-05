@@ -5,7 +5,7 @@ from infrastructure.supabase_store import SupabaseStore
 from infrastructure.llm_service import LLMService, LLMProvider
 from core.chain_runner import ChainRunner
 from core.agent import AgentSpec
-from tools import BrowsingTool, ScrapingTool, CalculationTool, RestApiTool, AutopilotTool
+import tools
 from components.agent_dashboard import render_chain_dashboard
 from components.chain_analytics import render_analytics_dashboard
 
@@ -15,9 +15,13 @@ if not setup_auth(): st.stop()
 @st.cache_resource
 def init():
     store = SupabaseStore()
-    tools = {"browsing": BrowsingTool(), "scraping": ScrapingTool(),
-             "calculation": CalculationTool(), "rest_api": RestApiTool(),
-             "autopilot": AutopilotTool()}
+    tools_dict = {
+        "browsing": tools.BrowsingTool(),
+        "scraping": tools.ScrapingTool(),
+        "calculation": tools.CalculationTool(),
+        "rest_api": tools.RestApiTool(),
+        "autopilot": tools.AutopilotTool()
+    }
     llm = LLMService(provider=LLMProvider.CLAUDE)
     runner = ChainRunner(llm_service=llm, store=store, available_tools=tools)
     return store, tools, llm, runner
