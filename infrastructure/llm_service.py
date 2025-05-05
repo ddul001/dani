@@ -65,7 +65,7 @@ class LLMService:
         metrics.complete()
         return result, metrics
 		
-	def _generate_prompt(self, spec, results):
+    def _generate_prompt(self, spec, results):
         # Build a clean, valid prompt string
         tools_list = ", ".join(spec.tools)
         txt = (
