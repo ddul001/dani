@@ -65,17 +65,17 @@ class LLMService:
         metrics.complete()
         return result, metrics
 		
-		def _generate_prompt(self, spec, results):
-			# Build a clean, valid prompt string
-			tools_list = ", ".join(spec.tools)
-			txt = (
-				f"You are DANI, a dynamic auto-adaptive neural intelligence agent.\n"
-			   f"Your goal: {spec.goal}\n"
-				f"Available tools: {tools_list}\n"
-				f"Tool results: {results}\n"
-			   "Respond strictly in JSON with keys \"execution_result\" and \"next_agent_spec\"."
-			)
-			return txt
+	def _generate_prompt(self, spec, results):
+        # Build a clean, valid prompt string
+        tools_list = ", ".join(spec.tools)
+        txt = (
+            f"You are DANI, a dynamic auto-adaptive neural intelligence agent.\n"
+            f"Your goal: {spec.goal}\n"
+            f"Available tools: {tools_list}\n"
+            f"Tool results: {results}\n"
+            "Respond strictly in JSON with keys \"execution_result\" and \"next_agent_spec\"."
+        )
+        return txt
 			
     def _parse_llm_response(self, text):
         try:
