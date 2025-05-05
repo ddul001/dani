@@ -1,0 +1,22 @@
+# Python caches and builds
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual envs
+.env
+.venv
+venv/
+
+# Streamlit secrets
+.streamlit/secrets.toml
+
+# Supabase migrations & logs
+*.log
+
+# IDEs
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
