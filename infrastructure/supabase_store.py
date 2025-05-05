@@ -15,12 +15,12 @@ class SupabaseStore:
             supabase_key = st.secrets["SUPABASE_ANON_KEY"]
             
             # Initialize Supabase client without proxy parameter
-            self.supabase: Client = create_client(supabase_url, supabase_key)
+            self.client: Client = create_client(supabase_url, supabase_key)
         except Exception as e:
             st.error(f"Failed to initialize Supabase client: {str(e)}")
             st.info("Check your Supabase URL and anon key in .streamlit/secrets.toml")
             raise
-
+    
     def create_chain(self, initial_goal: str) -> str:
         cid = str(uuid4())
         now = datetime.now().isoformat()
@@ -29,13 +29,13 @@ class SupabaseStore:
             "status":"CREATED", "created_at":now, "updated_at":now
         }).execute()
         return cid
-
+    
     def update_chain_status(self, chain_id: str, status: str):
         now = datetime.now().isoformat()
         self.client.table("chains").update({
             "status": status, "updated_at": now
         }).eq("id", chain_id).execute()
-
+    
     def store_agent_execution(self, chain_id: str, spec: AgentSpec, res: AgentResult, metrics: Any=None) -> str:
         eid = str(uuid4())
         spec_json = spec.json()
@@ -50,13 +50,13 @@ class SupabaseStore:
         }).execute()
         self.update_chain_status(chain_id, "RUNNING")
         return eid
-
+    
     def get_chain_details(self, chain_id: str) -> Dict[str, Any]:
         resp = self.client.table("chains").select("*").eq("id", chain_id).execute()
         if not resp.data:
             raise ValueError("Chain not found")
         return resp.data[0]
-
+    
     def get_chain_executions(self, chain_id: str) -> List[Dict[str, Any]]:
         resp = self.client.table("agent_executions").select("*").eq("chain_id", chain_id).order("created_at").execute()
         rows = []
@@ -66,11 +66,11 @@ class SupabaseStore:
             if r.get("metrics"): r["metrics"] = json.loads(r["metrics"])
             rows.append(r)
         return rows
-
+    
     def get_active_chains(self, limit: int=5) -> List[Dict[str, Any]]:
         resp = self.client.table("chains").select("*").not_("status","eq","COMPLETED").order("updated_at",desc=True).limit(limit).execute()
         return resp.data
-
+    
     def get_all_chains_with_metrics(self) -> List[Dict[str, Any]]:
         chains = self.client.table("chains").select("*").execute().data
         for c in chains:
