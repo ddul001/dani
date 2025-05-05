@@ -9,9 +9,17 @@ from core.agent import AgentSpec, AgentResult
 
 class SupabaseStore:
     def __init__(self):
-        url = st.secrets["SUPABASE_URL"]
-        key = st.secrets["SUPABASE_ANON_KEY"]
-        self.client: Client = create_client(url, key)
+        # Get credentials from Streamlit secrets
+        try:
+            supabase_url = st.secrets["SUPABASE_URL"]
+            supabase_key = st.secrets["SUPABASE_ANON_KEY"]
+            
+            # Initialize Supabase client without proxy parameter
+            self.supabase: Client = create_client(supabase_url, supabase_key)
+        except Exception as e:
+            st.error(f"Failed to initialize Supabase client: {str(e)}")
+            st.info("Check your Supabase URL and anon key in .streamlit/secrets.toml")
+            raise
 
     def create_chain(self, initial_goal: str) -> str:
         cid = str(uuid4())
