@@ -64,9 +64,19 @@ class LLMService:
         result=self._parse_llm_response(txt)
         metrics.complete()
         return result, metrics
-    def _generate_prompt(self,spec,results):
-        txt=f"""You are DANI agent. Goal: {spec.goal}\nTools: {','"+'.join(spec.tools)}\nResults: {results}\nRespond JSON with execution_result and next_agent_spec"""
-        return txt
+		
+		def _generate_prompt(self, spec, results):
+			# Build a clean, valid prompt string
+			tools_list = ", ".join(spec.tools)
+			txt = (
+				f"You are DANI, a dynamic auto-adaptive neural intelligence agent.\n"
+			   f"Your goal: {spec.goal}\n"
+				f"Available tools: {tools_list}\n"
+				f"Tool results: {results}\n"
+			   "Respond strictly in JSON with keys \"execution_result\" and \"next_agent_spec\"."
+			)
+			return txt
+			
     def _parse_llm_response(self, text):
         try:
             m=re.search(r'```(?:json)?\s*(.*?)\s*```', text, re.DOTALL)
