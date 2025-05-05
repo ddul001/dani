@@ -1,0 +1,25 @@
+dani
+├── .gitignore
+├── .streamlit
+│   └── secrets.toml
+├── app.py
+├── components
+│   ├── agent_dashboard.py
+│   └── chain_analytics.py
+├── core
+│   ├── agent.py
+│   ├── chain_runner.py
+│   └── tool.py
+├── infrastructure
+│   ├── auth.py
+│   ├── llm_service.py
+│   └── supabase_store.py
+├── README.md
+├── requirements.txt
+└── tools
+    ├── autopilot_tool.py
+    ├── browsing_tool.py
+    ├── calculation_tool.py
+    ├── rest_api_tool.py
+    ├── scraping_tool.py
+    └── __init__.py
