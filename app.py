@@ -5,7 +5,7 @@ from infrastructure.supabase_store import SupabaseStore
 from infrastructure.llm_service import LLMService, LLMProvider
 from core.chain_runner import ChainRunner
 from core.agent import AgentSpec
-import tools
+from tools import tools  # <-- import the actual dict
 from components.agent_dashboard import render_chain_dashboard
 from components.chain_analytics import render_analytics_dashboard
 
@@ -36,13 +36,15 @@ if sel=="New Chain":
     with st.form("f"):
         goal = st.text_area("Goal","")
         selected = st.multiselect("Tools", list(tools.keys()), default=list(tools.keys()))
-        if st.form_submit_button("Launch"):
+        launch = st.form_submit_button("Launch")  # <- assign to a variable
+        if launch:
             cid = runner.start_chain(goal, selected)
             res = runner.execute_next_agent(cid, AgentSpec(goal=goal, tools=selected))
-            if res.errors: st.error(res.errors)
+            if res.errors:
+                st.error(res.errors)
             else:
                 st.success(f"Launched {cid[:8]}")
-                st.session_state.selected=cid
+                st.session_state.selected = cid
 
 elif sel=="Monitor":
     cid = st.session_state.get("selected")
